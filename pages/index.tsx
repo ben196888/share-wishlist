@@ -1,3 +1,4 @@
+import { Box, Button, Heading, HStack, Input, Text, VStack } from '@chakra-ui/react'
 import Head from 'next/head'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
@@ -29,20 +30,7 @@ export default function Home() {
       }
     }
   }, [items])
-  const renderItems = (items: Item[]) => {
-    return (
-      <>
-        {
-          items.map(item =>
-            <a key={item.id} href="#" className={styles.card}>
-              <h2>{item.name}</h2>
-              <p>Description</p>
-            </a>
-          )
-        }
-      </>
-    )
-  }
+  const renderItems = (items: Item[]) => items.map(item => <Text key={item.id}>{item.name}</Text>)
 
   const [newItem, setNewItem] = useState<string>('')
   const onUpdateValue = (event) => {
@@ -55,31 +43,28 @@ export default function Home() {
   }
 
   return (
-    <div className={styles.container}>
+    <Box>
       <Head>
         <title>Share My Wishlist</title>
         <meta name="description" content="Share my wishlist" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
+      <Box>
+        <Heading as='h1' size='4xl'>
           Wishlist
-        </h1>
+        </Heading>
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
+        <VStack>
           <form onSubmit={onAppendItem}>
-            <input type="text" onChange={onUpdateValue} value={newItem} />
-            <button onClick={onAppendItem}>New</button>
+            <HStack>
+              <Input placeholder='new wish item' onChange={onUpdateValue} value={newItem} />
+              <Button onClick={onAppendItem}>New</Button>
+            </HStack>
           </form>
           {renderItems(items)}
-        </div>
-      </main>
+        </VStack>
+      </Box>
 
       <footer className={styles.footer}>
         <a
@@ -93,6 +78,6 @@ export default function Home() {
           </span>
         </a>
       </footer>
-    </div>
+    </Box>
   )
 }
