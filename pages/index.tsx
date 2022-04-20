@@ -1,21 +1,40 @@
 import Head from 'next/head'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { v4 as uuidv4 } from 'uuid'
 import styles from '../styles/Home.module.css'
 
 type Item = {
+  id: string
   name: string
   status: 'open' | 'reserved' | 'closed'
 }
 
 export default function Home() {
-  const [items, setItems] = useState<Item[]>([]);
+  const initialState = []
+  const [items, setItems] = useState<Item[]>(initialState)
+  useEffect(() => {
+    let items
+    if (typeof window !== 'undefined') {
+      items = JSON.parse(window.localStorage.getItem('items'))
+    }
+    if (items) {
+      setItems(items)
+    }
+  }, [])
+  useEffect(() => {
+    if (items !== initialState) {
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem('items', JSON.stringify(items))
+      }
+    }
+  }, [items])
   const renderItems = (items: Item[]) => {
     return (
       <>
         {
           items.map(item =>
-            <a key={item.name} href="#" className={styles.card}>
+            <a key={item.id} href="#" className={styles.card}>
               <h2>{item.name}</h2>
               <p>Description</p>
             </a>
@@ -31,7 +50,7 @@ export default function Home() {
   }
   const onAppendItem = (event) => {
     event.preventDefault();
-    setItems(items => [...items, { name: newItem, status: 'open' }])
+    setItems(items => [...items, { id: uuidv4(), name: newItem, status: 'open' }])
     setNewItem('')
   }
 
