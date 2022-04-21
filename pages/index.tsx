@@ -1,15 +1,19 @@
-import { AddIcon, DeleteIcon } from '@chakra-ui/icons'
+import { AddIcon, DeleteIcon, LinkIcon } from '@chakra-ui/icons'
 import {
   Box,
+  Button,
+  ButtonGroup,
   Center,
   Editable,
   EditableInput,
   EditablePreview,
+  Flex,
   Heading,
   HStack,
   IconButton,
   Input,
   Link,
+  Spacer,
   VStack,
 } from '@chakra-ui/react'
 import Head from 'next/head'
@@ -95,13 +99,27 @@ export default function Home() {
         </Center>
 
         <VStack>
-          <form onSubmit={onAppendItem}>
-            <HStack>
-              <Input placeholder='new wish item' onChange={onUpdateValue} value={newItem} />
-              <IconButton aria-label='add item' colorScheme='teal' icon={<AddIcon />} onClick={onAppendItem}>New</IconButton>
-            </HStack>
+          <Flex w='xs' align='center'>
+            <Box>
+              <Heading as='h2'>My wishlist</Heading>
+            </Box>
+            <Spacer />
+            <Box>
+              <ButtonGroup size='sm' isAttached variant='outline'>
+                <Button mr='-px'>Save</Button>
+                <IconButton aria-label='get share link' icon={<LinkIcon />} />
+              </ButtonGroup>
+            </Box>
+          </Flex>
+          <Box>
+            <form onSubmit={onAppendItem}>
+              <HStack>
+                <Input placeholder='new wish item' onChange={onUpdateValue} value={newItem} />
+                <IconButton aria-label='add item' colorScheme='teal' icon={<AddIcon />} onClick={onAppendItem}>New</IconButton>
+              </HStack>
+            </form>
             {renderItems(items)}
-          </form>
+          </Box>
         </VStack>
       </Box>
 
