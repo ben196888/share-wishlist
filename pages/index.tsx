@@ -43,7 +43,7 @@ export default function Home() {
     }
   }, [items])
 
-  const removeItem = (index) => {
+  const removeItemCreator = (index) => () => {
     setItems(prevItems => {
       const nextItems = prevItems.slice()
       nextItems.splice(index, 1)
@@ -65,7 +65,7 @@ export default function Home() {
         <EditablePreview css={{ width: '100%' }} />
         <EditableInput onChange={updateItemCreator(index)} />
       </Editable>
-      <IconButton aria-label='delete item' icon={<DeleteIcon />} onClick={() => removeItem(index)} />
+      <IconButton aria-label='delete item' icon={<DeleteIcon />} onClick={removeItemCreator(index)} />
     </HStack>
   ))
 
