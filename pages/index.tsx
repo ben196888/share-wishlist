@@ -1,4 +1,5 @@
-import { Box, Button, Center, Editable, EditableInput, EditablePreview, Heading, HStack, Input, Link, Text, VStack } from '@chakra-ui/react'
+import { AddIcon, DeleteIcon } from '@chakra-ui/icons'
+import { Box, Button, Center, Editable, EditableInput, EditablePreview, Heading, HStack, IconButton, Input, Link, Text, VStack } from '@chakra-ui/react'
 import Head from 'next/head'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
@@ -29,11 +30,23 @@ export default function Home() {
       }
     }
   }, [items])
-  const renderItems = (items: Item[]) => items.map(item => (
-    <Editable key={item.id} value={item.name} selectAllOnFocus={false}>
-      <EditablePreview />
-      <EditableInput />
-    </Editable>
+
+  const removeItem = (index) => {
+    setItems(prevItems => {
+      const nextItems = prevItems.slice()
+      nextItems.splice(index, 1)
+      return nextItems
+    })
+  }
+
+  const renderItems = (items: Item[]) => items.map((item, index) => (
+    <HStack key={item.id}>
+      <Editable value={item.name} selectAllOnFocus={false}>
+        <EditablePreview />
+        <EditableInput />
+      </Editable>
+      <IconButton aria-label='delete item' icon={<DeleteIcon />} onClick={() => removeItem(index)} />
+    </HStack>
   ))
 
   const [newItem, setNewItem] = useState<string>('')
@@ -65,7 +78,7 @@ export default function Home() {
           <form onSubmit={onAppendItem}>
             <HStack>
               <Input placeholder='new wish item' onChange={onUpdateValue} value={newItem} />
-              <Button onClick={onAppendItem}>New</Button>
+              <IconButton aria-label='add item' colorScheme='teal' icon={<AddIcon />} onClick={onAppendItem}>New</IconButton>
             </HStack>
           </form>
           {renderItems(items)}
