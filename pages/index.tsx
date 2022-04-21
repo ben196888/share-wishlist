@@ -1,9 +1,8 @@
-import { Box, Button, Heading, HStack, Input, Text, VStack } from '@chakra-ui/react'
+import { Box, Button, Center, Editable, EditableInput, EditablePreview, Heading, HStack, Input, Link, Text, VStack } from '@chakra-ui/react'
 import Head from 'next/head'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
-import styles from '../styles/Home.module.css'
 
 type Item = {
   id: string
@@ -30,7 +29,12 @@ export default function Home() {
       }
     }
   }, [items])
-  const renderItems = (items: Item[]) => items.map(item => <Text key={item.id}>{item.name}</Text>)
+  const renderItems = (items: Item[]) => items.map(item => (
+    <Editable key={item.id} value={item.name} selectAllOnFocus={false}>
+      <EditablePreview />
+      <EditableInput />
+    </Editable>
+  ))
 
   const [newItem, setNewItem] = useState<string>('')
   const onUpdateValue = (event) => {
@@ -50,10 +54,12 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Box>
-        <Heading as='h1' size='4xl'>
-          Wishlist
-        </Heading>
+      <Box as='main'>
+        <Center>
+          <Heading as='h1' size='4xl'>
+            Wishlist
+          </Heading>
+        </Center>
 
         <VStack>
           <form onSubmit={onAppendItem}>
@@ -66,18 +72,17 @@ export default function Home() {
         </VStack>
       </Box>
 
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+      <Center as='footer'>
+        <Box>
           Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
+          <Link href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app" isExternal>
+
+            <Box as='span'>
+              <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
+            </Box>
+          </Link>
+        </Box>
+      </Center>
     </Box>
   )
 }
