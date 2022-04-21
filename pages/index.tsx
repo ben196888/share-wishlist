@@ -1,5 +1,17 @@
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons'
-import { Box, Button, Center, Editable, EditableInput, EditablePreview, Heading, HStack, IconButton, Input, Link, Text, VStack } from '@chakra-ui/react'
+import {
+  Box,
+  Center,
+  Editable,
+  EditableInput,
+  EditablePreview,
+  Heading,
+  HStack,
+  IconButton,
+  Input,
+  Link,
+  VStack,
+} from '@chakra-ui/react'
 import Head from 'next/head'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
@@ -39,11 +51,19 @@ export default function Home() {
     })
   }
 
+  const updateItemCreator = (index) => (event) => {
+    setItems(prevItems => {
+      const nextItems = prevItems.slice()
+      nextItems[index].name = event.target.value
+      return nextItems
+    })
+  }
+
   const renderItems = (items: Item[]) => items.map((item, index) => (
     <HStack key={item.id}>
-      <Editable value={item.name} selectAllOnFocus={false}>
-        <EditablePreview />
-        <EditableInput />
+      <Editable css={{ width: '100%' }} value={item.name} selectAllOnFocus={false}>
+        <EditablePreview css={{ width: '100%' }} />
+        <EditableInput onChange={updateItemCreator(index)} />
       </Editable>
       <IconButton aria-label='delete item' icon={<DeleteIcon />} onClick={() => removeItem(index)} />
     </HStack>
@@ -80,8 +100,8 @@ export default function Home() {
               <Input placeholder='new wish item' onChange={onUpdateValue} value={newItem} />
               <IconButton aria-label='add item' colorScheme='teal' icon={<AddIcon />} onClick={onAppendItem}>New</IconButton>
             </HStack>
+            {renderItems(items)}
           </form>
-          {renderItems(items)}
         </VStack>
       </Box>
 
