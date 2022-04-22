@@ -14,12 +14,15 @@ import {
   Input,
   Link,
   Spacer,
+  useToast,
   VStack,
 } from '@chakra-ui/react'
 import Head from 'next/head'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
+import { addDoc, collection, doc, setDoc } from 'firebase/firestore'
+import { firestore } from '../firebase/clientApp'
 
 type Item = {
   id: string
@@ -83,6 +86,27 @@ export default function Home() {
     setNewItem('')
   }
 
+  const toast = useToast()
+  const saveWishlist = async (items: Item[]) => {
+    try {
+      const ref = await addDoc(collection(firestore, 'wishlists'), { items })
+      console.log('refId', ref.id)
+      toast({
+        title: 'Wishlist saved.',
+        status: 'success',
+        isClosable: true,
+      })
+    } catch (err) {
+      console.log('save wishlist failed', err)
+      toast({
+        title: 'Wishlist saved failure',
+        status: 'error',
+        description: err.toString(),
+        isClosable: true,
+      })
+    }
+  }
+
   return (
     <Box>
       <Head>
@@ -106,7 +130,7 @@ export default function Home() {
             <Spacer />
             <Box>
               <ButtonGroup size='sm' isAttached variant='outline'>
-                <Button mr='-px'>Save</Button>
+                <Button mr='-px' onClick={() => saveWishlist(items)}>Save</Button>
                 <IconButton aria-label='get share link' icon={<LinkIcon />} />
               </ButtonGroup>
             </Box>
