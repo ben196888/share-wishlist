@@ -19,9 +19,9 @@ import {
 } from '@chakra-ui/react'
 import Head from 'next/head'
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
-import { addDoc, collection, doc, setDoc } from 'firebase/firestore'
+import { addDoc, collection } from 'firebase/firestore'
 import { firestore } from '../firebase/clientApp'
 
 type Item = {
@@ -87,7 +87,7 @@ export default function Home() {
   }
 
   const toast = useToast()
-  const saveWishlist = async (items: Item[]) => {
+  const saveWishlist = useCallback(async (items: Item[]) => {
     try {
       const ref = await addDoc(collection(firestore, 'wishlists'), { items })
       console.log('refId', ref.id)
@@ -105,7 +105,11 @@ export default function Home() {
         isClosable: true,
       })
     }
-  }
+  }, [toast])
+
+  const onSave = useCallback(() => {
+    saveWishlist(items)
+  }, [saveWishlist, items])
 
   return (
     <Box>
@@ -130,7 +134,7 @@ export default function Home() {
             <Spacer />
             <Box>
               <ButtonGroup size='sm' isAttached variant='outline'>
-                <Button mr='-px' onClick={() => saveWishlist(items)}>Save</Button>
+                <Button mr='-px' onClick={onSave}>Save</Button>
                 <IconButton aria-label='get share link' icon={<LinkIcon />} />
               </ButtonGroup>
             </Box>
