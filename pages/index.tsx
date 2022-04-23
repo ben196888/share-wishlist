@@ -71,13 +71,13 @@ export default function Home() {
     saveWishlist(items)
   }, [saveWishlist, items])
 
-  const { generateShareLink } = useShareLink()
+  const { getShareLink } = useShareLink()
 
   const onShareLink = useCallback(async () => {
     const wishlist = await saveWishlist(items)
-    const shareLink = await generateShareLink(wishlist)
+    const shareLink = await getShareLink(wishlist)
     console.log('share link generated', shareLink)
-  }, [saveWishlist, items, generateShareLink])
+  }, [saveWishlist, items, getShareLink])
 
   return (
     <Box>

@@ -32,5 +32,14 @@ export default function useShareLink() {
 
     return buildShareLink(shortPath)
   }, [])
-  return { generateShareLink }
+
+  const getShareLink = useCallback(async (wishlist: ShareWishlist.Wishlist) => {
+    if (wishlist.shortPath) {
+      return buildShareLink(wishlist.shortPath)
+    }
+    console.log('start generate')
+    return await generateShareLink(wishlist)
+  }, [generateShareLink])
+
+  return { generateShareLink, getShareLink }
 }
