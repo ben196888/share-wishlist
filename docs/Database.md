@@ -45,6 +45,7 @@ JSON format
   },
   wishlists: {
     [wishlistId]: {
+      id: WishlistId
       roles: {
         [userId]: 'owner'
       },
