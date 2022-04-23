@@ -1,4 +1,3 @@
-import { useToast } from '@chakra-ui/react'
 import { ref, runTransaction } from 'firebase/database'
 import { useCallback } from 'react'
 import { database as db } from '../firebase/clientApp'
@@ -6,38 +5,21 @@ import type { ShareWishlist } from '../types'
 import useWishlistId from './useWishlistId'
 
 export default function useSaveWishlist() {
-  const toast = useToast()
   const { updateWishlistId } = useWishlistId()
 
   const saveWishlist = useCallback(async (items: ShareWishlist.Item[]) => {
-    try {
-      const wishlistId = updateWishlistId()
-      const wishlistPath = `/wishlists/${wishlistId}`
-      const result = await runTransaction(ref(db, wishlistPath), (wishlist: ShareWishlist.Wishlist) => {
-        if (!wishlist.id) {
-          wishlist.id = wishlistId
-        }
-        wishlist.roles = {}
-        wishlist.items = items
-      })
+    const wishlistId = updateWishlistId()
+    const wishlistPath = `/wishlists/${wishlistId}`
+    const result = await runTransaction(ref(db, wishlistPath), (wishlist: ShareWishlist.Wishlist) => {
+      if (!wishlist.id) {
+        wishlist.id = wishlistId
+      }
+      wishlist.roles = {}
+      wishlist.items = items
+    })
 
-      toast({
-        title: 'Wishlist saved.',
-        status: 'success',
-        isClosable: true,
-      })
-
-      return result.snapshot.val() as ShareWishlist.Wishlist
-    } catch (err) {
-      console.log('save wishlist failed', err)
-      toast({
-        title: 'Wishlist saved failure',
-        status: 'error',
-        description: err.toString(),
-        isClosable: true,
-      })
-    }
-  }, [toast, updateWishlistId])
+    return result.snapshot.val() as ShareWishlist.Wishlist
+  }, [updateWishlistId])
 
   return saveWishlist
 }

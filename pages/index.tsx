@@ -23,6 +23,7 @@ import { useLocalStorage, useCopyToClipboard } from 'usehooks-ts'
 import { v4 as uuidv4 } from 'uuid'
 import useSaveWishlist from '../hooks/useSaveWishlist'
 import useShareLink from '../hooks/useShareLink'
+import useFlowWithToast from '../hooks/useFlowWithToast'
 import type { ShareWishlist } from '../types'
 
 export default function Home() {
@@ -67,19 +68,31 @@ export default function Home() {
 
   const saveWishlist = useSaveWishlist()
 
-  const onSave = useCallback(() => {
-    saveWishlist(items)
+  const saveFlow = useCallback(async () => {
+    await saveWishlist(items)
   }, [saveWishlist, items])
+
+  const onSave = useFlowWithToast(
+    { title: 'Wishlist saved.' },
+    { title: 'Wishlist save failure.' },
+    saveFlow,
+  )
 
   const { getShareLink } = useShareLink()
   const [copiedText, copy] = useCopyToClipboard()
 
-  const onShareLink = useCallback(async () => {
+  const shareLinkFlow = useCallback(async () => {
     const wishlist = await saveWishlist(items)
     const shareLink = await getShareLink(wishlist)
     await copy(shareLink)
-    console.log('share link generated', shareLink)
+    return shareLink
   }, [saveWishlist, items, getShareLink, copy])
+
+  const onShareLink = useFlowWithToast(
+    { title: 'Share link is copied in the clipboard.', description: shareLink => shareLink },
+    { title: 'Share link create failure.' },
+    shareLinkFlow,
+  )
 
   return (
     <Box>
