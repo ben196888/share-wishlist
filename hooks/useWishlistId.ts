@@ -9,7 +9,7 @@ export default function useWishlistId() {
   const [wishlistId, setWishlistId] = useLocalStorage('wishlistId', initialWishlistId)
 
   const isValidWishlistId = useMemo(() => {
-    return wishlistId === initialWishlistId
+    return wishlistId !== initialWishlistId
   }, [wishlistId])
 
   const updateWishlistId = useCallback(() => {
