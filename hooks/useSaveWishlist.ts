@@ -12,14 +12,16 @@ export default function useSaveWishlist() {
   const saveWishlist = useCallback(async (items: ShareWishlist.Item[]) => {
     try {
       const wishlistId = updateWishlistId()
+      const wishlist = { wishlistId, items }
       const updates = {}
-      updates[`/wishlists/${wishlistId}`] = { items }
+      updates[`/wishlists/${wishlistId}`] = wishlist
       await update(ref(db), updates)
       toast({
         title: 'Wishlist saved.',
         status: 'success',
         isClosable: true,
       })
+      return wishlist
     } catch (err) {
       console.log('save wishlist failed', err)
       toast({
