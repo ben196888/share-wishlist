@@ -21,6 +21,7 @@ type Wishlist = {
   id: WishlistId
   roles: Record<UserId, Role>
   items: Item[]
+  shortPath: ShortPath
 }
 
 type Item = {
@@ -49,6 +50,7 @@ JSON format
       roles: {
         [userId]: 'owner'
       },
+      shortPath: ShortPath,
       items: [{ id: itemId, name: string }]
     }
   },
