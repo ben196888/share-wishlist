@@ -16,7 +16,7 @@ export default function useFlowWithToast<T extends (...args: any[]) => any>(
   successOption: SuccessToastOption<Awaited<ReturnType<T>>>,
   failureOption: FailureToastOption,
   flowFn: T,
-): T {
+): (...args: Parameters<T>) => void {
   const toast = useToast({ isClosable: true })
 
   const withToastFlow = useCallback(async (...args) => {

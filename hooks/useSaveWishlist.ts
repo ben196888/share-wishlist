@@ -16,6 +16,7 @@ export default function useSaveWishlist() {
       }
       wishlist.roles = {}
       wishlist.items = items
+      return wishlist
     })
 
     return result.snapshot.val() as ShareWishlist.Wishlist
