@@ -22,6 +22,7 @@ import { useCallback, useState } from 'react'
 import { useLocalStorage } from 'usehooks-ts'
 import { v4 as uuidv4 } from 'uuid'
 import useSaveWishlist from '../hooks/useSaveWishlist'
+import useShareLink from '../hooks/useShareLink'
 import type { ShareWishlist } from '../types'
 
 export default function Home() {
@@ -69,6 +70,13 @@ export default function Home() {
   const onSave = useCallback(() => {
     saveWishlist(items)
   }, [saveWishlist, items])
+
+  const { generateShareLink } = useShareLink()
+
+  const onShareLink = useCallback(() => {
+    const wishlist = saveWishlist(items)
+    const shareLink = generateShareLink(wishlist)
+  }, [saveWishlist, items, generateShareLink])
 
   return (
     <Box>
