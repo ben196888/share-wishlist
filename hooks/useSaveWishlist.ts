@@ -3,11 +3,15 @@ import { ref, update } from 'firebase/database'
 import { useCallback } from 'react'
 import { database as db } from '../firebase/clientApp'
 import type { ShareWishlist } from '../types'
+import useWishlistId from './useWishlistId'
 
 export default function useSaveWishlist() {
   const toast = useToast()
-  const saveWishlist = useCallback(async (wishlistId: string, items: ShareWishlist.Item[]) => {
+  const { updateWishlistId } = useWishlistId()
+
+  const saveWishlist = useCallback(async (items: ShareWishlist.Item[]) => {
     try {
+      const wishlistId = updateWishlistId()
       const updates = {}
       updates[`/wishlists/${wishlistId}`] = { items }
       await update(ref(db), updates)
@@ -25,7 +29,7 @@ export default function useSaveWishlist() {
         isClosable: true,
       })
     }
-  }, [toast])
+  }, [toast, updateWishlistId])
 
   return saveWishlist
 }

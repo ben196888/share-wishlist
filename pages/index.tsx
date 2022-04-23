@@ -16,13 +16,11 @@ import {
   Spacer,
   VStack,
 } from '@chakra-ui/react'
-import { child, push, ref } from 'firebase/database'
 import Head from 'next/head'
 import Image from 'next/image'
 import { useCallback, useState } from 'react'
 import { useLocalStorage } from 'usehooks-ts'
 import { v4 as uuidv4 } from 'uuid'
-import { database as db } from '../firebase/clientApp'
 import useSaveWishlist from '../hooks/useSaveWishlist'
 import type { ShareWishlist } from '../types'
 
@@ -66,16 +64,11 @@ export default function Home() {
     setNewItem('')
   }
 
-  const [wishlistId, setWishlistId] = useLocalStorage('wishlistId', '')
   const saveWishlist = useSaveWishlist()
 
   const onSave = useCallback(() => {
-    const currWishListId = wishlistId === '' ? push(child(ref(db), 'wishlists')).key : wishlistId
-    if (currWishListId !== wishlistId) {
-      setWishlistId(currWishListId)
-    }
-    saveWishlist(currWishListId, items)
-  }, [saveWishlist, items, wishlistId, setWishlistId])
+    saveWishlist(items)
+  }, [saveWishlist, items])
 
   return (
     <Box>
