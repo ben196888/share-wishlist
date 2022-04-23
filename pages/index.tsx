@@ -17,12 +17,12 @@ import {
   useToast,
   VStack,
 } from '@chakra-ui/react'
+import { child, push, ref, update } from 'firebase/database'
 import Head from 'next/head'
 import Image from 'next/image'
 import { useCallback, useEffect, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
-import { addDoc, collection } from 'firebase/firestore'
-import { firestore } from '../firebase/clientApp'
+import { database as db } from '../firebase/clientApp'
 
 type Item = {
   id: string
@@ -89,8 +89,10 @@ export default function Home() {
   const toast = useToast()
   const saveWishlist = useCallback(async (items: Item[]) => {
     try {
-      const ref = await addDoc(collection(firestore, 'wishlists'), { items })
-      console.log('refId', ref.id)
+      const wishlistId = push(child(ref(db), 'wishlists')).key
+      const updates = {}
+      updates['/wishlists/' + wishlistId] = { items }
+      await update(ref(db), updates)
       toast({
         title: 'Wishlist saved.',
         status: 'success',
