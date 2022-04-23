@@ -21,7 +21,7 @@ type Wishlist = {
   id: WishlistId
   roles: Record<UserId, Role>
   items: Item[]
-  shortPath: ShortPath
+  shortPath?: ShortPath
 }
 
 type Item = {

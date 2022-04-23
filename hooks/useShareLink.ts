@@ -1,6 +1,7 @@
 import { ref, update } from 'firebase/database'
 import { useCallback } from 'react'
 import { database as db } from '../firebase/clientApp'
+import type { ShareWishlist } from '../types'
 
 const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
 
@@ -13,13 +14,13 @@ const randomPath = (length = 8) => {
   return result
 }
 
-const buildShareLink = (shortPath: string) => {
+const buildShareLink = (shortPath: ShareWishlist.ShortPath) => {
   const path = `/l/${shortPath}`
   return `${window.location.origin}${path}`
 }
 
 export default function useShareLink() {
-  const generateShareLink = useCallback(async (wishlist) => {
+  const generateShareLink = useCallback(async (wishlist: ShareWishlist.Wishlist) => {
     const shortPath = randomPath()
     const path = { id: shortPath, wishlistId: wishlist.id }
 

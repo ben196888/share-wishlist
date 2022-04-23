@@ -12,7 +12,7 @@ export default function useSaveWishlist() {
   const saveWishlist = useCallback(async (items: ShareWishlist.Item[]) => {
     try {
       const wishlistId = updateWishlistId()
-      const wishlist = { id: wishlistId, items }
+      const wishlist: ShareWishlist.Wishlist = { id: wishlistId, items, roles: {} }
       const updates = {}
       updates[`/wishlists/${wishlistId}`] = wishlist
       await update(ref(db), updates)
