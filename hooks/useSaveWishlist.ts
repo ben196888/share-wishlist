@@ -1,5 +1,5 @@
 import { useToast } from '@chakra-ui/react'
-import { ref, update } from 'firebase/database'
+import { ref, runTransaction } from 'firebase/database'
 import { useCallback } from 'react'
 import { database as db } from '../firebase/clientApp'
 import type { ShareWishlist } from '../types'
@@ -12,16 +12,22 @@ export default function useSaveWishlist() {
   const saveWishlist = useCallback(async (items: ShareWishlist.Item[]) => {
     try {
       const wishlistId = updateWishlistId()
-      const wishlist: ShareWishlist.Wishlist = { id: wishlistId, items, roles: {} }
-      const updates = {}
-      updates[`/wishlists/${wishlistId}`] = wishlist
-      await update(ref(db), updates)
+      const wishlistPath = `/wishlists/${wishlistId}`
+      const result = await runTransaction(ref(db, wishlistPath), (wishlist: ShareWishlist.Wishlist) => {
+        if (!wishlist.id) {
+          wishlist.id = wishlistId
+        }
+        wishlist.roles = {}
+        wishlist.items = items
+      })
+
       toast({
         title: 'Wishlist saved.',
         status: 'success',
         isClosable: true,
       })
-      return wishlist
+
+      return result.snapshot.val() as ShareWishlist.Wishlist
     } catch (err) {
       console.log('save wishlist failed', err)
       toast({
