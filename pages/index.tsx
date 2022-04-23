@@ -14,26 +14,21 @@ import {
   Input,
   Link,
   Spacer,
-  useToast,
   VStack,
 } from '@chakra-ui/react'
-import { child, push, ref, update } from 'firebase/database'
+import { child, push, ref } from 'firebase/database'
 import Head from 'next/head'
 import Image from 'next/image'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useLocalStorage } from 'usehooks-ts'
 import { v4 as uuidv4 } from 'uuid'
 import { database as db } from '../firebase/clientApp'
-
-type Item = {
-  id: string
-  name: string
-  status: 'open' | 'reserved' | 'closed'
-}
+import useSaveWishlist from '../hooks/useSaveWishlist'
+import type { ShareWishlist } from '../types'
 
 export default function Home() {
   const initialState = []
-  const [items, setItems] = useLocalStorage<Item[]>('items', initialState)
+  const [items, setItems] = useLocalStorage<ShareWishlist.Item[]>('items', initialState)
 
   const removeItemCreator = (index) => () => {
     setItems(prevItems => {
@@ -51,7 +46,7 @@ export default function Home() {
     })
   }
 
-  const renderItems = (items: Item[]) => items.map((item, index) => (
+  const renderItems = (items: ShareWishlist.Item[]) => items.map((item, index) => (
     <HStack key={item.id}>
       <Editable css={{ width: '100%' }} value={item.name} selectAllOnFocus={false}>
         <EditablePreview css={{ width: '100%' }} />
@@ -71,34 +66,16 @@ export default function Home() {
     setNewItem('')
   }
 
-  const toast = useToast()
   const [wishlistId, setWishlistId] = useLocalStorage('wishlistId', '')
-  const saveWishlist = useCallback(async (items: Item[]) => {
-    try {
-      const currWishListId = wishlistId === '' ? push(child(ref(db), 'wishlists')).key : wishlistId
-      const updates = {}
-      updates['/wishlists/' + wishlistId] = { items }
-      await update(ref(db), updates)
-      setWishlistId(currWishListId)
-      toast({
-        title: 'Wishlist saved.',
-        status: 'success',
-        isClosable: true,
-      })
-    } catch (err) {
-      console.log('save wishlist failed', err)
-      toast({
-        title: 'Wishlist saved failure',
-        status: 'error',
-        description: err.toString(),
-        isClosable: true,
-      })
-    }
-  }, [toast, wishlistId])
+  const saveWishlist = useSaveWishlist()
 
   const onSave = useCallback(() => {
-    saveWishlist(items)
-  }, [saveWishlist, items])
+    const currWishListId = wishlistId === '' ? push(child(ref(db), 'wishlists')).key : wishlistId
+    if (currWishListId !== wishlistId) {
+      setWishlistId(currWishListId)
+    }
+    saveWishlist(currWishListId, items)
+  }, [saveWishlist, items, wishlistId, setWishlistId])
 
   return (
     <Box>
