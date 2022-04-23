@@ -76,6 +76,7 @@ export default function Home() {
   const onShareLink = useCallback(() => {
     const wishlist = saveWishlist(items)
     const shareLink = generateShareLink(wishlist)
+    console.log('share link generated', shareLink)
   }, [saveWishlist, items, generateShareLink])
 
   return (
@@ -102,7 +103,7 @@ export default function Home() {
             <Box>
               <ButtonGroup size='sm' isAttached variant='outline'>
                 <Button mr='-px' onClick={onSave}>Save</Button>
-                <IconButton aria-label='get share link' icon={<LinkIcon />} />
+                <IconButton aria-label='get share link' icon={<LinkIcon />} onClick={onShareLink} />
               </ButtonGroup>
             </Box>
           </Flex>
