@@ -75,7 +75,7 @@ export default function Home() {
   const [wishlistId, setWishlistId] = useLocalStorage('wishlistId', '')
   const saveWishlist = useCallback(async (items: Item[]) => {
     try {
-      const currWishListId = wishlistId ?? push(child(ref(db), 'wishlists')).key
+      const currWishListId = wishlistId === '' ? push(child(ref(db), 'wishlists')).key : wishlistId
       const updates = {}
       updates['/wishlists/' + wishlistId] = { items }
       await update(ref(db), updates)
