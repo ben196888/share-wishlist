@@ -72,12 +72,14 @@ export default function Home() {
   }
 
   const toast = useToast()
+  const [wishlistId, setWishlistId] = useLocalStorage('wishlistId', '')
   const saveWishlist = useCallback(async (items: Item[]) => {
     try {
-      const wishlistId = push(child(ref(db), 'wishlists')).key
+      const currWishListId = wishlistId ?? push(child(ref(db), 'wishlists')).key
       const updates = {}
       updates['/wishlists/' + wishlistId] = { items }
       await update(ref(db), updates)
+      setWishlistId(currWishListId)
       toast({
         title: 'Wishlist saved.',
         status: 'success',
@@ -92,7 +94,7 @@ export default function Home() {
         isClosable: true,
       })
     }
-  }, [toast])
+  }, [toast, wishlistId])
 
   const onSave = useCallback(() => {
     saveWishlist(items)
