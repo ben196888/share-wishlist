@@ -19,7 +19,7 @@ import {
 import Head from 'next/head'
 import Image from 'next/image'
 import { useCallback, useState } from 'react'
-import { useLocalStorage } from 'usehooks-ts'
+import { useLocalStorage, useCopyToClipboard } from 'usehooks-ts'
 import { v4 as uuidv4 } from 'uuid'
 import useSaveWishlist from '../hooks/useSaveWishlist'
 import useShareLink from '../hooks/useShareLink'
@@ -72,12 +72,14 @@ export default function Home() {
   }, [saveWishlist, items])
 
   const { getShareLink } = useShareLink()
+  const [copiedText, copy] = useCopyToClipboard()
 
   const onShareLink = useCallback(async () => {
     const wishlist = await saveWishlist(items)
     const shareLink = await getShareLink(wishlist)
+    await copy(shareLink)
     console.log('share link generated', shareLink)
-  }, [saveWishlist, items, getShareLink])
+  }, [saveWishlist, items, getShareLink, copy])
 
   return (
     <Box>
