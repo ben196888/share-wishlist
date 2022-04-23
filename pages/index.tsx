@@ -21,6 +21,7 @@ import { child, push, ref, update } from 'firebase/database'
 import Head from 'next/head'
 import Image from 'next/image'
 import { useCallback, useEffect, useState } from 'react'
+import { useLocalStorage } from 'usehooks-ts'
 import { v4 as uuidv4 } from 'uuid'
 import { database as db } from '../firebase/clientApp'
 
@@ -32,23 +33,7 @@ type Item = {
 
 export default function Home() {
   const initialState = []
-  const [items, setItems] = useState<Item[]>(initialState)
-  useEffect(() => {
-    let items
-    if (typeof window !== 'undefined') {
-      items = JSON.parse(window.localStorage.getItem('items'))
-    }
-    if (items) {
-      setItems(items)
-    }
-  }, [])
-  useEffect(() => {
-    if (items !== initialState) {
-      if (typeof window !== 'undefined') {
-        window.localStorage.setItem('items', JSON.stringify(items))
-      }
-    }
-  }, [items])
+  const [items, setItems] = useLocalStorage<Item[]>('items', initialState)
 
   const removeItemCreator = (index) => () => {
     setItems(prevItems => {
