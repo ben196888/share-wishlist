@@ -26,6 +26,7 @@ export default function useShareLink() {
 
     const updates = {}
     updates[`/shortPathMap/${shortPath}`] = path
+    updates[`/wishlists/${wishlist.id}/shortPath`] = path
 
     await update(ref(db), updates)
 
