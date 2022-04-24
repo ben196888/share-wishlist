@@ -10,13 +10,16 @@ export default function useSaveWishlist() {
   const saveWishlist = useCallback(async (items: ShareWishlist.Item[]) => {
     const wishlistId = updateWishlistId()
     const wishlistPath = `/wishlists/${wishlistId}`
-    const result = await runTransaction(ref(db, wishlistPath), (wishlist: ShareWishlist.Wishlist) => {
-      if (!wishlist.id) {
-        wishlist.id = wishlistId
+    const result = await runTransaction(ref(db, wishlistPath), (wishlist: ShareWishlist.Wishlist | null) => {
+
+      const nextWishlist: ShareWishlist.Wishlist = {
+        ...wishlist,
+        items,
+        id: wishlistId,
+        roles: {},
       }
-      wishlist.roles = {}
-      wishlist.items = items
-      return wishlist
+
+      return nextWishlist
     })
 
     return result.snapshot.val() as ShareWishlist.Wishlist
