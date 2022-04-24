@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   ButtonGroup,
-  Center,
   Editable,
   EditableInput,
   EditablePreview,
@@ -12,12 +11,9 @@ import {
   HStack,
   IconButton,
   Input,
-  Link,
   Spacer,
   VStack,
 } from '@chakra-ui/react'
-import Head from 'next/head'
-import Image from 'next/image'
 import { useCallback, useState } from 'react'
 import { useLocalStorage, useCopyToClipboard } from 'usehooks-ts'
 import { v4 as uuidv4 } from 'uuid'
@@ -25,10 +21,11 @@ import useWishlist from '../hooks/useWishlist'
 import useShareLink from '../hooks/useShareLink'
 import useFlowWithToast from '../hooks/useFlowWithToast'
 import type { ShareWishlist } from '../types'
+import useLayout from '../hooks/useLayout'
 
 export default function Home() {
-  const initialState = []
-  const [items, setItems] = useLocalStorage<ShareWishlist.Item[]>('items', initialState)
+  const { Layout } = useLayout()
+  const [items, setItems] = useLocalStorage<ShareWishlist.Item[]>('items', [])
 
   const removeItemCreator = (index) => () => {
     setItems(prevItems => {
@@ -95,20 +92,10 @@ export default function Home() {
   )
 
   return (
-    <Box>
-      <Head>
-        <title>Share My Wishlist</title>
-        <meta name="description" content="Share my wishlist" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <Box as='main'>
-        <Center>
-          <Heading as='h1' size='4xl'>
-            Wishlist
-          </Heading>
-        </Center>
-
+    <Layout.Container>
+      <Layout.Title />
+      <Layout.Header />
+      <Layout.Main>
         <VStack>
           <Flex w='xs' align='center'>
             <Box>
@@ -132,19 +119,9 @@ export default function Home() {
             {renderItems(items)}
           </Box>
         </VStack>
-      </Box>
+      </Layout.Main>
 
-      <Center as='footer'>
-        <Box>
-          Powered by{' '}
-          <Link href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app" isExternal>
-
-            <Box as='span'>
-              <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-            </Box>
-          </Link>
-        </Box>
-      </Center>
-    </Box>
+      <Layout.Footer />
+    </Layout.Container>
   )
 }
