@@ -21,7 +21,7 @@ import Image from 'next/image'
 import { useCallback, useState } from 'react'
 import { useLocalStorage, useCopyToClipboard } from 'usehooks-ts'
 import { v4 as uuidv4 } from 'uuid'
-import useSaveWishlist from '../hooks/useSaveWishlist'
+import useWishlist from '../hooks/useWishlist'
 import useShareLink from '../hooks/useShareLink'
 import useFlowWithToast from '../hooks/useFlowWithToast'
 import type { ShareWishlist } from '../types'
@@ -66,7 +66,7 @@ export default function Home() {
     setNewItem('')
   }
 
-  const saveWishlist = useSaveWishlist()
+  const { saveWishlist } = useWishlist()
 
   const saveFlow = useCallback(async () => {
     await saveWishlist(items)

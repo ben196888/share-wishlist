@@ -4,7 +4,7 @@ import { database as db } from '../firebase/clientApp'
 import type { ShareWishlist } from '../types'
 import useWishlistId from './useWishlistId'
 
-export default function useSaveWishlist() {
+export default function useWishlist() {
   const { updateWishlistId } = useWishlistId()
 
   const saveWishlist = useCallback(async (items: ShareWishlist.Item[]) => {
@@ -25,5 +25,5 @@ export default function useSaveWishlist() {
     return result.snapshot.val() as ShareWishlist.Wishlist
   }, [updateWishlistId])
 
-  return saveWishlist
+  return { saveWishlist }
 }
