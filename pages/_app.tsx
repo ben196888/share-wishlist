@@ -1,9 +1,18 @@
 import { ChakraProvider } from '@chakra-ui/react'
+import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
-import { useEffect, useState } from 'react'
+import { ReactElement, ReactNode, useEffect, useState } from 'react'
 import '../styles/globals.css'
 
-function MyApp({ Component, pageProps }: AppProps) {
+type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement) => ReactNode
+}
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout
+}
+
+function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const [isSSR, setIsSSR] = useState(true)
   useEffect(() => {
     setIsSSR(false)
@@ -12,9 +21,12 @@ function MyApp({ Component, pageProps }: AppProps) {
   if (isSSR) {
     return <></>
   }
+
+  const getLayout = Component.getLayout ?? ((page) => page)
+
   return (
     <ChakraProvider>
-      <Component {...pageProps} />
+      {getLayout(<Component {...pageProps} />)}
     </ChakraProvider>
   )
 }

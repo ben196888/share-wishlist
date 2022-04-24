@@ -14,17 +14,16 @@ import {
   Spacer,
   VStack,
 } from '@chakra-ui/react'
-import { useCallback, useState } from 'react'
+import { ReactElement, useCallback, useState } from 'react'
 import { useLocalStorage, useCopyToClipboard } from 'usehooks-ts'
 import { v4 as uuidv4 } from 'uuid'
 import useWishlist from '../hooks/useWishlist'
 import useShareLink from '../hooks/useShareLink'
 import useFlowWithToast from '../hooks/useFlowWithToast'
 import type { ShareWishlist } from '../types'
-import useLayout from '../hooks/useLayout'
+import Layout from '../components/Layout'
 
 export default function Home() {
-  const { Layout } = useLayout()
   const [items, setItems] = useLocalStorage<ShareWishlist.Item[]>('items', [])
 
   const removeItemCreator = (index) => () => {
@@ -81,47 +80,51 @@ export default function Home() {
   const shareLinkFlow = useCallback(async () => {
     const wishlist = await saveWishlist(items)
     const shareLink = await getShareLink(wishlist)
-    await copy(shareLink)
-    return shareLink
+    const result = await copy(shareLink)
+    return [result, shareLink]
   }, [saveWishlist, items, getShareLink, copy])
 
   const onShareLink = useFlowWithToast(
-    { title: 'Share link is copied in the clipboard.', description: shareLink => shareLink },
+    { title: 'Share link is copied in the clipboard.', description: ([result, shareLink]) => result ? shareLink : 'Faiiiled :(((' },
     { title: 'Share link create failure.' },
     shareLinkFlow,
   )
 
   return (
-    <Layout.Container>
-      <Layout.Title />
+    <VStack>
+      <Flex w='xs' align='center'>
+        <Box>
+          <Heading as='h2'>My wishlist</Heading>
+        </Box>
+        <Spacer />
+        <Box>
+          <ButtonGroup size='sm' isAttached variant='outline'>
+            <Button mr='-px' onClick={onSave}>Save</Button>
+            <IconButton aria-label='get share link' icon={<LinkIcon />} onClick={onShareLink} />
+          </ButtonGroup>
+        </Box>
+      </Flex>
+      <Box>
+        <form onSubmit={onAppendItem}>
+          <HStack>
+            <Input placeholder='new wish item' onChange={onUpdateValue} value={newItem} />
+            <IconButton aria-label='add item' colorScheme='teal' icon={<AddIcon />} onClick={onAppendItem}>New</IconButton>
+          </HStack>
+        </form>
+        {renderItems(items)}
+      </Box>
+    </VStack>
+  )
+}
+
+Home.getLayout = function (page: ReactElement) {
+  return (
+    <Layout>
       <Layout.Header />
       <Layout.Main>
-        <VStack>
-          <Flex w='xs' align='center'>
-            <Box>
-              <Heading as='h2'>My wishlist</Heading>
-            </Box>
-            <Spacer />
-            <Box>
-              <ButtonGroup size='sm' isAttached variant='outline'>
-                <Button mr='-px' onClick={onSave}>Save</Button>
-                <IconButton aria-label='get share link' icon={<LinkIcon />} onClick={onShareLink} />
-              </ButtonGroup>
-            </Box>
-          </Flex>
-          <Box>
-            <form onSubmit={onAppendItem}>
-              <HStack>
-                <Input placeholder='new wish item' onChange={onUpdateValue} value={newItem} />
-                <IconButton aria-label='add item' colorScheme='teal' icon={<AddIcon />} onClick={onAppendItem}>New</IconButton>
-              </HStack>
-            </form>
-            {renderItems(items)}
-          </Box>
-        </VStack>
+        {page}
       </Layout.Main>
-
       <Layout.Footer />
-    </Layout.Container>
+    </Layout>
   )
 }
