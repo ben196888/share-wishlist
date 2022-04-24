@@ -1,6 +1,7 @@
 import { ref } from 'firebase/database';
 import { useRouter } from 'next/router';
 import { useObjectVal } from 'react-firebase-hooks/database'
+import WishlistComponent from '../../components/WishlistComponent';
 import { database as db } from '../../firebase/clientApp';
 import type { ShareWishlist } from '../../types';
 
@@ -13,7 +14,7 @@ export default function ShortPath() {
     <>
       {error && `Error: ${error}`}
       {loading && 'Loading...'}
-      {shortPathVal && JSON.stringify(shortPathVal)}
+      {shortPathVal && <WishlistComponent wishlistId={shortPathVal.wishlistId} />}
     </>
   )
 }
