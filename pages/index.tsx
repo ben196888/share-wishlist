@@ -14,7 +14,7 @@ import {
   Spacer,
   VStack,
 } from '@chakra-ui/react'
-import { ReactElement, useCallback, useState } from 'react'
+import { ChangeEventHandler, MouseEventHandler, ReactElement, useCallback, useState } from 'react'
 import { useLocalStorage, useCopyToClipboard } from 'usehooks-ts'
 import { v4 as uuidv4 } from 'uuid'
 import useWishlist from '../hooks/useWishlist'
@@ -26,41 +26,41 @@ import Layout from '../components/Layout'
 export default function Home() {
   const [items, setItems] = useLocalStorage<ShareWishlist.Item[]>('items', [])
 
-  const removeItemCreator = (index) => () => {
+  const removeItemCreator: (index: number) => MouseEventHandler<HTMLButtonElement> = useCallback((index) => () => {
     setItems(prevItems => {
       const nextItems = prevItems.slice()
       nextItems.splice(index, 1)
       return nextItems
     })
-  }
+  }, [setItems])
 
-  const updateItemCreator = (index) => (event) => {
+  const updateItemCreator: (index: number) => ChangeEventHandler<HTMLInputElement> = useCallback((index) => (event) => {
     setItems(prevItems => {
       const nextItems = prevItems.slice()
       nextItems[index].name = event.target.value
       return nextItems
     })
-  }
+  }, [setItems])
 
   const renderItems = (items: ShareWishlist.Item[]) => items.map((item, index) => (
-    <HStack key={item.id}>
+    <HStack key={item.id} mt='1'>
       <Editable css={{ width: '100%' }} value={item.name} selectAllOnFocus={false}>
         <EditablePreview css={{ width: '100%' }} />
         <EditableInput onChange={updateItemCreator(index)} />
       </Editable>
-      <IconButton aria-label='delete item' icon={<DeleteIcon />} onClick={removeItemCreator(index)} />
+      <IconButton size='sm' aria-label='delete item' icon={<DeleteIcon />} onClick={removeItemCreator(index)} />
     </HStack>
   ))
 
   const [newItem, setNewItem] = useState<string>('')
-  const onUpdateValue = (event) => {
+  const onUpdateValue: ChangeEventHandler<HTMLInputElement> = useCallback((event) => {
     setNewItem(event.target.value)
-  }
-  const onAppendItem = (event) => {
+  }, [setNewItem])
+  const onAppendItem = useCallback((event) => {
     event.preventDefault();
     setItems(items => [...items, { id: uuidv4(), name: newItem, status: 'open' }])
     setNewItem('')
-  }
+  }, [setItems, newItem, setNewItem])
 
   const { saveWishlist } = useWishlist()
 
@@ -99,7 +99,7 @@ export default function Home() {
 
   return (
     <VStack>
-      <Flex w='xs' align='center'>
+      <Flex w='xs' align='center' justify='center'>
         <Box>
           <Heading as='h2'>My wishlist</Heading>
         </Box>
@@ -111,11 +111,11 @@ export default function Home() {
           </ButtonGroup>
         </Box>
       </Flex>
-      <Box>
+      <Box w='xs'>
         <form onSubmit={onAppendItem}>
           <HStack>
-            <Input placeholder='new wish item' onChange={onUpdateValue} value={newItem} />
-            <IconButton aria-label='add item' colorScheme='teal' icon={<AddIcon />} onClick={onAppendItem}>New</IconButton>
+            <Input required pattern='^(?!\s*$).+' placeholder='new wish item' onChange={onUpdateValue} value={newItem} />
+            <IconButton size='sm' aria-label='add item' colorScheme='teal' icon={<AddIcon />} onClick={onAppendItem} />
           </HStack>
         </form>
         {renderItems(items)}
