@@ -29,8 +29,6 @@ export default function useFlowWithToast<T extends (...args: any[]) => any>(
         title: successOption.title,
         description,
       })
-
-      return result
     } catch (err) {
       const description = failureOption.description ? failureOption.description(err) : err.toString()
 
