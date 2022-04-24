@@ -4,7 +4,7 @@
 type Schema = {
   users: Record<UserId, User>
   wishlists: Record<WishlistId, Wishlist>
-  shortPathMap: Record<ShortPath, Path>
+  shortPaths: Record<ShortPath, Path>
 }
 
 type UserId = string
@@ -54,7 +54,7 @@ JSON format
       items: [{ id: itemId, name: string }]
     }
   },
-  shortPathMap: {
+  shortPaths: {
     [shortPath]: {
       id: shortPath
       wishlistId: wishlistId

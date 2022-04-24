@@ -2,7 +2,7 @@ export declare namespace ShareWishlist {
   export type Schema = {
     users: Record<UserId, User>
     wishlists: Record<WishlistId, Wishlist>
-    shortPathMap: Record<ShortPath, Path>
+    shortPaths: Record<ShortPath, Path>
   }
 
   export type UserId = string
