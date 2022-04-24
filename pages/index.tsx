@@ -75,17 +75,24 @@ export default function Home() {
   )
 
   const { getShareLink } = useShareLink()
-  const [copiedText, copy] = useCopyToClipboard()
+  const [, copy] = useCopyToClipboard()
 
   const shareLinkFlow = useCallback(async () => {
     const wishlist = await saveWishlist(items)
     const shareLink = await getShareLink(wishlist)
-    const result = await copy(shareLink)
-    return [result, shareLink]
+    const copied = await copy(shareLink)
+    if (copied) {
+      return shareLink
+    }
+    if (navigator.share) {
+      await navigator.share({ text: shareLink })
+      return shareLink
+    }
+    throw Error('Cannot copy or share the link')
   }, [saveWishlist, items, getShareLink, copy])
 
   const onShareLink = useFlowWithToast(
-    { title: 'Share link is copied in the clipboard.', description: ([result, shareLink]) => result ? shareLink : 'Faiiiled :(((' },
+    { title: 'Share link is generated.', description: shareLink => shareLink },
     { title: 'Share link create failure.' },
     shareLinkFlow,
   )

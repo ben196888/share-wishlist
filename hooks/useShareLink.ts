@@ -37,8 +37,8 @@ export default function useShareLink() {
     if (wishlist.shortPath) {
       return buildShareLink(wishlist.shortPath)
     }
-    console.log('start generate')
-    return await generateShareLink(wishlist)
+
+    return generateShareLink(wishlist)
   }, [generateShareLink])
 
   return { generateShareLink, getShareLink }
