@@ -18,14 +18,12 @@ const WishlistItems: FC<WishlistItemsProps> = () => {
     updateItemAt(index, { name: event.target.value })
   }, [updateItemAt])
 
-  const css = useMemo(() => ({ width: '100%' }), [])
-
   return (
     <>
       {items.map((item, index) => (
         <HStack key={item.id} mt='1'>
-          <Editable css={css} value={item.name} selectAllOnFocus={false} isDisabled={!isEditable}>
-            <EditablePreview css={css} />
+          <Editable w='100%' value={item.name} selectAllOnFocus={false} isDisabled={!isEditable}>
+            <EditablePreview w='100%' />
             <EditableInput onChange={updateItemCreator(index)} />
           </Editable>
           {isEditable && <IconButton size='sm' aria-label='delete item' icon={<DeleteIcon />} onClick={removeItemCreator(index)} />}
