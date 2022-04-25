@@ -20,7 +20,7 @@ export function useItems({ items = [], isEditable = false }: UseItemsProps = {})
 
 // component level context hooks
 export function useWishlistItems() {
-  const { items, setItems } = useWishlistContext()
+  const { isEditable, items, setItems } = useWishlistContext()
 
   const removeItemAt = useCallback((index: number) => {
     setItems(prevItems => {
@@ -40,11 +40,5 @@ export function useWishlistItems() {
     })
   }, [setItems])
 
-  return { items, setItems, removeItemAt, updateItemAt }
-}
-
-export function useWishlist() {
-  const { isEditable } = useWishlistContext()
-
-  return { isEditable }
+  return { isEditable, items, setItems, removeItemAt, updateItemAt }
 }
