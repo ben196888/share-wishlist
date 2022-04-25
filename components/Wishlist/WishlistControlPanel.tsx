@@ -3,7 +3,6 @@ import { Box, Button, ButtonGroup, IconButton } from '@chakra-ui/react'
 import { FC, useCallback } from 'react'
 import { useCopyToClipboard } from 'usehooks-ts'
 import useFlowWithToast from '../../hooks/useFlowWithToast'
-import useShareLink from '../../hooks/useShareLink'
 import { useWishlistControlPanel } from './use-wishlist'
 
 export type WishlistControlPanelProps = {
@@ -11,7 +10,7 @@ export type WishlistControlPanelProps = {
 }
 
 const WishlistControlPanel: FC<WishlistControlPanelProps> = () => {
-  const { saveWishlist, items } = useWishlistControlPanel()
+  const { saveWishlist, items, getShareLink } = useWishlistControlPanel()
 
   const saveFlow = useCallback(async () => {
     await saveWishlist(items)
@@ -23,7 +22,6 @@ const WishlistControlPanel: FC<WishlistControlPanelProps> = () => {
     saveFlow,
   )
 
-  const { getShareLink } = useShareLink()
   const [, copy] = useCopyToClipboard()
 
   const shareLinkFlow = useCallback(async () => {
