@@ -1,7 +1,7 @@
 import { Box, Flex, Spacer, VStack } from '@chakra-ui/react'
 import { FC, useMemo } from 'react'
 import { ShareWishlist } from '../../types'
-import { useItems } from './use-wishlist'
+import { useItems, useWishlist } from './use-wishlist'
 import { WishlistContextProps, WishlistProvider } from './WishlistContext'
 import WishlistControlPanel from './WishlistControlPanel'
 import WishlistItems from './WishlistItems'
@@ -21,15 +21,11 @@ interface WishlistComponent extends FC<WishlistProps> {
 }
 
 const Wishlist: WishlistComponent = ({ isEditable, wishlist }) => {
-  const [items, setItems] = useItems({ isEditable, items: wishlist?.items })
+  const ctx = useWishlist({ isEditable, wishlist })
 
   const context: WishlistContextProps = useMemo(() => {
-    return {
-      isEditable,
-      items,
-      setItems,
-    }
-  }, [isEditable, items, setItems])
+    return { ...ctx }
+  }, [ctx])
 
   return (
     <WishlistProvider value={context}>
