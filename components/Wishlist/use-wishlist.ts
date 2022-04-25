@@ -42,3 +42,9 @@ export function useWishlistItems() {
 
   return { items, setItems, removeItemAt, updateItemAt }
 }
+
+export function useWishlist() {
+  const { isEditable } = useWishlistContext()
+
+  return { isEditable }
+}

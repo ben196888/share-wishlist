@@ -1,12 +1,13 @@
 import { DeleteIcon } from '@chakra-ui/icons'
 import { Editable, EditableInput, EditablePreview, HStack, IconButton } from '@chakra-ui/react'
 import { ChangeEventHandler, FC, MouseEventHandler, useCallback, useMemo } from 'react'
-import { useWishlistItems } from './use-wishlist'
+import { useWishlist, useWishlistItems } from './use-wishlist'
 
 export type WishlistItemsProps = {
 }
 
 const WishlistItems: FC<WishlistItemsProps> = () => {
+  const { isEditable } = useWishlist()
   const { items, removeItemAt, updateItemAt } = useWishlistItems()
 
   const removeItemCreator: (index: number) => MouseEventHandler<HTMLButtonElement> = useCallback((index) => () => {
@@ -23,11 +24,11 @@ const WishlistItems: FC<WishlistItemsProps> = () => {
     <>
       {items.map((item, index) => (
         <HStack key={item.id} mt='1'>
-          <Editable css={css} value={item.name} selectAllOnFocus={false}>
+          <Editable css={css} value={item.name} selectAllOnFocus={false} isDisabled={!isEditable}>
             <EditablePreview css={css} />
             <EditableInput onChange={updateItemCreator(index)} />
           </Editable>
-          <IconButton size='sm' aria-label='delete item' icon={<DeleteIcon />} onClick={removeItemCreator(index)} />
+          {isEditable && <IconButton size='sm' aria-label='delete item' icon={<DeleteIcon />} onClick={removeItemCreator(index)} />}
         </HStack>
       ))}
     </>

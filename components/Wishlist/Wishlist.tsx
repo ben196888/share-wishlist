@@ -35,12 +35,21 @@ const Wishlist: WishlistComponent = ({ isEditable, wishlist }) => {
     <WishlistProvider value={context}>
       <VStack>
         <Flex w='xs' align='center' justify='center'>
-          <WishlistTitle />
-          <Spacer />
-          <WishlistControlPanel />
+          {
+            isEditable ? (
+              <>
+                <WishlistTitle />
+                <Spacer />
+                <WishlistControlPanel />
+              </>
+            ) : (
+              <>
+                <WishlistTitle />
+              </>
+            )}
         </Flex>
         <Box w='xs'>
-          <WishlistNewItem />
+          {isEditable && <WishlistNewItem />}
           <WishlistItems />
         </Box>
       </VStack>
