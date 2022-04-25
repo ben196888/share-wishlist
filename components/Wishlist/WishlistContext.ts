@@ -7,7 +7,7 @@ export interface WishlistContextProps {
   isEditable?: boolean
   items: ShareWishlist.Item[]
   setItems: Dispatch<SetStateAction<ShareWishlist.Item[]>>
-  saveWishlist: (items: ShareWishlist.Item[]) => Promise<ShareWishlist.Wishlist>
+  updateWishlistId: () => string
 }
 
 export const [WishlistProvider, useWishlistContext] = createContext<WishlistContextProps>({

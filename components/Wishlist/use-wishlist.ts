@@ -49,28 +49,7 @@ export function useWishlist({ wishlist, isEditable = false }: UseWishlistProps =
   const [items, setItems] = useItems({ items: wishlist?.items, isEditable })
   const { updateWishlistId } = useWishlistId()
 
-  const saveWishlist = useCallback(async (items: ShareWishlist.Item[]) => {
-    if (!isEditable) {
-      throw Error('You cannot save this wishlist')
-    }
-    const wishlistId = updateWishlistId()
-    const wishlistPath = `/wishlists/${wishlistId}`
-
-    const result = await runTransaction(ref(db, wishlistPath), (wishlist: ShareWishlist.Wishlist | null) => {
-      const nextWishlist: ShareWishlist.Wishlist = {
-        ...wishlist,
-        items,
-        id: wishlistId,
-        roles: {},
-      }
-
-      return nextWishlist
-    })
-
-    return result.snapshot.val() as ShareWishlist.Wishlist
-  }, [isEditable, updateWishlistId])
-
-  return { wishlist, isEditable, saveWishlist, items, setItems }
+  return { wishlist, isEditable, items, setItems, updateWishlistId }
 }
 
 
@@ -116,7 +95,28 @@ const buildShareLink = (shortPath: ShareWishlist.ShortPath) => {
 }
 
 export function useWishlistControlPanel() {
-  const { saveWishlist, items } = useWishlistContext()
+  const { isEditable, items, updateWishlistId } = useWishlistContext()
+
+  const saveWishlist = useCallback(async (items: ShareWishlist.Item[]) => {
+    if (!isEditable) {
+      throw Error('You cannot save this wishlist')
+    }
+    const wishlistId = updateWishlistId()
+    const wishlistPath = `/wishlists/${wishlistId}`
+
+    const result = await runTransaction(ref(db, wishlistPath), (wishlist: ShareWishlist.Wishlist | null) => {
+      const nextWishlist: ShareWishlist.Wishlist = {
+        ...wishlist,
+        items,
+        id: wishlistId,
+        roles: {},
+      }
+
+      return nextWishlist
+    })
+
+    return result.snapshot.val() as ShareWishlist.Wishlist
+  }, [isEditable, updateWishlistId])
 
   const generateShareLink = useCallback(async (wishlist: ShareWishlist.Wishlist) => {
     const shortPath = randomPath()
