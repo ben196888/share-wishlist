@@ -1,7 +1,7 @@
 import { Box, Flex, Spacer, VStack } from '@chakra-ui/react'
 import { FC, useMemo } from 'react'
-import { useLocalStorage } from 'usehooks-ts'
 import { ShareWishlist } from '../../types'
+import { useItems } from './use-wishlist'
 import { WishlistContextProps, WishlistProvider } from './WishlistContext'
 import WishlistControlPanel from './WishlistControlPanel'
 import WishlistItems from './WishlistItems'
@@ -20,8 +20,8 @@ interface WishlistComponent extends FC<WishlistProps> {
   Title: typeof WishlistTitle
 }
 
-const Wishlist: WishlistComponent = ({ isEditable }) => {
-  const [items, setItems] = useLocalStorage<ShareWishlist.Item[]>('items', [])
+const Wishlist: WishlistComponent = ({ isEditable, wishlist }) => {
+  const [items, setItems] = useItems({ isEditable, items: wishlist?.items })
 
   const context: WishlistContextProps = useMemo(() => {
     return {

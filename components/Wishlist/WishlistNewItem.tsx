@@ -2,14 +2,14 @@ import { AddIcon } from '@chakra-ui/icons'
 import { HStack, IconButton, Input } from '@chakra-ui/react'
 import { ChangeEventHandler, FC, useCallback, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
-import { useItems } from './use-wishlist'
+import { useWishlistItems } from './use-wishlist'
 
 export type WishlistNewItemProps = {
   isDisabled?: boolean
 }
 
 const WishlistNewItem: FC<WishlistNewItemProps> = () => {
-  const { setItems } = useItems()
+  const { setItems } = useWishlistItems()
 
   const [newItem, setNewItem] = useState<string>('')
   const onUpdateValue: ChangeEventHandler<HTMLInputElement> = useCallback((event) => {

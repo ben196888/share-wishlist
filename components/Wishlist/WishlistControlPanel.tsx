@@ -5,7 +5,7 @@ import { useCopyToClipboard } from 'usehooks-ts'
 import useFlowWithToast from '../../hooks/useFlowWithToast'
 import useShareLink from '../../hooks/useShareLink'
 import useWishlist from '../../hooks/useWishlist'
-import { useItems } from './use-wishlist'
+import { useWishlistItems } from './use-wishlist'
 
 export type WishlistControlPanelProps = {
   isDisabled?: boolean
@@ -13,7 +13,7 @@ export type WishlistControlPanelProps = {
 
 const WishlistControlPanel: FC<WishlistControlPanelProps> = () => {
   const { saveWishlist } = useWishlist()
-  const { items } = useItems()
+  const { items } = useWishlistItems()
 
   const saveFlow = useCallback(async () => {
     await saveWishlist(items)

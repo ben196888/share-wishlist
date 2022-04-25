@@ -1,13 +1,13 @@
 import { DeleteIcon } from '@chakra-ui/icons'
 import { Editable, EditableInput, EditablePreview, HStack, IconButton } from '@chakra-ui/react'
 import { ChangeEventHandler, FC, MouseEventHandler, useCallback, useMemo } from 'react'
-import { useItems } from './use-wishlist'
+import { useWishlistItems } from './use-wishlist'
 
 export type WishlistItemsProps = {
 }
 
 const WishlistItems: FC<WishlistItemsProps> = () => {
-  const { items, setItems, removeItemAt, updateItemAt } = useItems()
+  const { items, removeItemAt, updateItemAt } = useWishlistItems()
 
   const removeItemCreator: (index: number) => MouseEventHandler<HTMLButtonElement> = useCallback((index) => () => {
     removeItemAt(index)

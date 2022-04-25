@@ -9,6 +9,8 @@ const WishlistComponent = ({ wishlistId }) => {
   const wishlistPath = `/wishlists/${wishlistId}`
   const [wishlist, loading, error] = useObjectVal<ShareWishlist.Wishlist>(ref(db, wishlistPath))
 
+  console.log('wishlist id', wishlistId)
+
   const wishlistIdLocal = useReadLocalStorage<ShareWishlist.WishlistId>('wishlistId')
   const isEditable = wishlistIdLocal === wishlistId
 
