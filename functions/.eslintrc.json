@@ -30,6 +30,6 @@
   "rules": {
     "import/no-unresolved": 0,
     "semi": 0,
-    "object-curly-spacing": 2
+    "object-curly-spacing": 0
   }
 }
