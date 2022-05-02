@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app'
-import { getDatabase } from 'firebase/database'
+import { connectDatabaseEmulator, getDatabase } from 'firebase/database'
+import { connectFunctionsEmulator, getFunctions } from 'firebase/functions'
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -13,5 +14,11 @@ const firebaseConfig = {
 
 export const app = initializeApp(firebaseConfig)
 export const database = getDatabase(app)
+export const functions = getFunctions(app)
+
+if (process.env.NODE_ENV === 'development') {
+  connectDatabaseEmulator(database, 'localhost', 9000)
+  connectFunctionsEmulator(functions, 'localhost', 5001)
+}
 
 export default app
