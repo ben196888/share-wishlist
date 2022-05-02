@@ -32,4 +32,15 @@ export declare namespace ShareWishlist {
     id: ShortPath
     wishlistId: WishlistId
   }
+
+  export namespace Functions {
+    export namespace GetWishlistByShortPath {
+      export type RequestData = {
+        shortPath: ShortPath
+      }
+      export type ResponseData = {
+        wishlist: Wishlist
+      }
+    }
+  }
 }
