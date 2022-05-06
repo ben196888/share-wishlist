@@ -9,6 +9,7 @@ type Schema = {
 
 type UserId = string
 type WishlistId = string
+type Title = string
 type ItemId = string
 type ShortPath = string
 type Role = 'owner'
@@ -19,6 +20,7 @@ type User = {
 
 type Wishlist = {
   id: WishlistId
+  title: Title
   roles: Record<UserId, Role>
   items: Item[]
   shortPath?: ShortPath
@@ -47,6 +49,7 @@ JSON format
   wishlists: {
     [wishlistId]: {
       id: WishlistId
+      title: Title,
       roles: {
         [userId]: 'owner'
       },

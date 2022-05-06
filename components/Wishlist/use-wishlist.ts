@@ -43,6 +43,19 @@ export function useWishlistId() {
   return { wishlistId, isValidWishlistId, updateWishlistId }
 }
 
+type UseTitleProps = {
+  title?: ShareWishlist.Title
+}
+
+export function useTitle({ title = 'My wishlist' }: UseTitleProps) {
+  const [titleValue, setTitleValue] = useState(title)
+  const onTitleChange = useCallback((nextTitle: string) => {
+    setTitleValue(nextTitle)
+  }, [setTitleValue])
+
+  return { title: titleValue, onTitleChange }
+}
+
 type UseWishlistProps = {
   wishlist?: ShareWishlist.Wishlist
   isEditable?: boolean
@@ -51,8 +64,9 @@ type UseWishlistProps = {
 export function useWishlist({ wishlist, isEditable = false }: UseWishlistProps = {}): WishlistContextProps {
   const [items, setItems] = useItems({ items: wishlist?.items, isEditable })
   const { updateWishlistId } = useWishlistId()
+  const { title, onTitleChange } = useTitle({ title: wishlist?.title })
 
-  return { wishlist, isEditable, items, setItems, updateWishlistId }
+  return { wishlist, isEditable, items, setItems, updateWishlistId, title, onTitleChange }
 }
 
 
@@ -149,4 +163,9 @@ export function useWishlistControlPanel() {
   )
 
   return { onSave, onShareLink }
+}
+
+export function useWishlistTitle() {
+  const { isEditable, title, onTitleChange } = useWishlistContext()
+  return { isEditable, title, onTitleChange }
 }

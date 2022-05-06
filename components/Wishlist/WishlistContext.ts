@@ -8,6 +8,8 @@ export interface WishlistContextProps {
   items: ShareWishlist.Item[]
   setItems: Dispatch<SetStateAction<ShareWishlist.Item[]>>
   updateWishlistId: () => string
+  title: ShareWishlist.Title
+  onTitleChange: (title: ShareWishlist.Title) => void
 }
 
 export const [WishlistProvider, useWishlistContext] = createContext<WishlistContextProps>({

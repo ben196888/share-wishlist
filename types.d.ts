@@ -7,6 +7,7 @@ export declare namespace ShareWishlist {
 
   export type UserId = string
   export type WishlistId = string
+  export type Title = string
   export type ItemId = string
   export type ShortPath = string
   export type Role = 'owner'
@@ -17,6 +18,7 @@ export declare namespace ShareWishlist {
 
   export type Wishlist = {
     id: WishlistId
+    title: Title
     roles: Record<UserId, Role>
     items: Item[]
     shortPath?: ShortPath
