@@ -1,8 +1,6 @@
 import { LinkIcon } from '@chakra-ui/icons'
 import { Box, Button, ButtonGroup, IconButton } from '@chakra-ui/react'
-import { FC, useCallback } from 'react'
-import { useCopyToClipboard } from 'usehooks-ts'
-import useFlowWithToast from '../../hooks/useFlowWithToast'
+import { FC } from 'react'
 import { useWishlistControlPanel } from './use-wishlist'
 
 export type WishlistControlPanelProps = {
@@ -10,39 +8,8 @@ export type WishlistControlPanelProps = {
 }
 
 const WishlistControlPanel: FC<WishlistControlPanelProps> = () => {
-  const { saveWishlist, items, getShareLink } = useWishlistControlPanel()
+  const { onSave, onShareLink } = useWishlistControlPanel()
 
-  const saveFlow = useCallback(async () => {
-    await saveWishlist(items)
-  }, [saveWishlist, items])
-
-  const onSave = useFlowWithToast(
-    { title: 'Wishlist saved.' },
-    { title: 'Wishlist save failure.' },
-    saveFlow,
-  )
-
-  const [, copy] = useCopyToClipboard()
-
-  const shareLinkFlow = useCallback(async () => {
-    const wishlist = await saveWishlist(items)
-    const shareLink = await getShareLink(wishlist)
-    const copied = await copy(shareLink)
-    if (copied) {
-      return shareLink
-    }
-    if (navigator.share) {
-      await navigator.share({ text: shareLink })
-      return shareLink
-    }
-    throw Error('Cannot copy or share the link')
-  }, [saveWishlist, items, getShareLink, copy])
-
-  const onShareLink = useFlowWithToast(
-    { title: 'Share link is generated.', description: shareLink => shareLink },
-    { title: 'Share link create failure.' },
-    shareLinkFlow,
-  )
   return (
     <Box>
       <ButtonGroup size='sm' isAttached variant='outline'>

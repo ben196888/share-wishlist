@@ -1,7 +1,10 @@
-import { child, push, ref, runTransaction, update } from 'firebase/database'
+import { child, push, ref, runTransaction } from 'firebase/database'
 import { useCallback, useMemo, useState } from 'react';
 import { useLocalStorage } from 'usehooks-ts';
 import { database as db } from '../../firebase/clientApp'
+import useCopyOrShare from '../../hooks/useCopyOrShare';
+import useFlowWithToast from '../../hooks/useFlowWithToast'
+import useFunction from '../../hooks/useFunction';
 import type { ShareWishlist } from '../../types';
 import { useWishlistContext, WishlistContextProps } from './WishlistContext';
 
@@ -118,26 +121,43 @@ export function useWishlistControlPanel() {
     return result.snapshot.val() as ShareWishlist.Wishlist
   }, [isEditable, updateWishlistId])
 
-  const generateShareLink = useCallback(async (wishlist: ShareWishlist.Wishlist) => {
-    const shortPath = randomPath()
-    const path = { id: shortPath, wishlistId: wishlist.id }
+  const saveFlow = useCallback(async () => {
+    await saveWishlist(items)
+  }, [saveWishlist, items])
 
-    const updates = {}
-    updates[`/shortPaths/${shortPath}`] = path
-    updates[`/wishlists/${wishlist.id}/shortPath`] = shortPath
+  const onSave = useFlowWithToast(
+    { title: 'Wishlist saved.' },
+    { title: 'Wishlist save failure.' },
+    saveFlow,
+  )
 
-    await update(ref(db), updates)
+  type ReqData = ShareWishlist.Functions.CreateWishlistShortPath.RequestData
+  type ResData = ShareWishlist.Functions.CreateWishlistShortPath.ResponseData
+  const createWishlistShortPath = useFunction<ReqData, ResData>('createWishlistShortPath')
 
-    return buildShareLink(shortPath)
-  }, [])
-
-  const getShareLink = useCallback(async (wishlist: ShareWishlist.Wishlist) => {
+  const getShortPath = useCallback(async () => {
+    const wishlist = await saveWishlist(items)
     if (wishlist.shortPath) {
-      return buildShareLink(wishlist.shortPath)
+      return wishlist.shortPath
     }
+    const result = await createWishlistShortPath({ wishlistId: wishlist.id })
+    return result.data.shortPath
+  }, [saveWishlist, items, createWishlistShortPath])
 
-    return generateShareLink(wishlist)
-  }, [generateShareLink])
+  const copyOrShare = useCopyOrShare()
 
-  return { saveWishlist, items, generateShareLink, getShareLink }
+  const shareLinkFlow = useCallback(async () => {
+    const shortPath = await getShortPath()
+    const shareLink = buildShareLink(shortPath)
+    const copiedShareLink = await copyOrShare(shareLink)
+    return copiedShareLink
+  }, [getShortPath, copyOrShare])
+
+  const onShareLink = useFlowWithToast(
+    { title: 'Share link is generated.', description: shareLink => shareLink },
+    { title: 'Share link create failure.' },
+    shareLinkFlow,
+  )
+
+  return { onSave, onShareLink }
 }
