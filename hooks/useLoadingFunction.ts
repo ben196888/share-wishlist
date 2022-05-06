@@ -5,5 +5,5 @@ export default function useLoadingFunction<TRequestData, TResponseData>(function
   const targetFunc = useFunction<TRequestData, TResponseData>(functionName)
   const { func, loading, error, response } = useLoading(targetFunc)
 
-  return { func, loading, error, data: response.data }
+  return { func, loading, error, data: response?.data }
 }
