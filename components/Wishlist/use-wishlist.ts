@@ -81,17 +81,6 @@ export function useWishlistItems() {
   return { isEditable, items, setItems, removeItemAt, updateItemAt }
 }
 
-const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-
-const randomPath = (length = 8) => {
-  let result = ''
-  for (let i = 0; i < length; i++) {
-    result += CHARS.charAt(Math.floor(Math.random() * CHARS.length))
-  }
-
-  return result
-}
-
 const buildShareLink = (shortPath: ShareWishlist.ShortPath) => {
   const path = `/l/${shortPath}`
   return `${window.location.origin}${path}`
