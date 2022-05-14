@@ -1,10 +1,10 @@
 import { child, push, ref, runTransaction } from 'firebase/database'
-import { useCallback, useMemo, useState } from 'react';
-import { useLocalStorage } from 'usehooks-ts';
+import { useCallback, useMemo } from 'react';
 import { database as db } from '../../firebase/clientApp'
 import useCopyOrShare from '../../hooks/useCopyOrShare';
 import useFlowWithToast from '../../hooks/useFlowWithToast'
 import useFunction from '../../hooks/useFunction';
+import useOptionalLocalStorage from '../../hooks/useOptionalLocalStorage';
 import type { ShareWishlist } from '../../types';
 import { useWishlistContext, WishlistContextProps } from './WishlistContext';
 
@@ -15,20 +15,19 @@ type UseItemsProps = {
 }
 
 export function useItems({ items = [], isEditable = false }: UseItemsProps = {}) {
-  const useStateWithoutLocalStorage = useState<ShareWishlist.Item[]>(items)
-  const useStateWithLocalStorage = useLocalStorage<ShareWishlist.Item[]>('items', items)
-  if (isEditable) {
-    return useStateWithLocalStorage
-  }
-  return useStateWithoutLocalStorage
+  return useOptionalLocalStorage('items', items, isEditable)
 }
 
-export function useWishlistId() {
-  const initialWishlistId = ''
-  const [wishlistId, setWishlistId] = useLocalStorage('wishlistId', initialWishlistId)
+type UseIdProps = {
+  id?: ShareWishlist.WishlistId
+  isEditable?: boolean
+}
+
+export function useWishlistId({ id = '', isEditable = false }: UseIdProps) {
+  const [wishlistId, setWishlistId] = useOptionalLocalStorage('wishlistId', id, isEditable)
 
   const isValidWishlistId = useMemo(() => {
-    return wishlistId !== initialWishlistId
+    return wishlistId !== ''
   }, [wishlistId])
 
   const updateWishlistId = useCallback(() => {
@@ -45,10 +44,11 @@ export function useWishlistId() {
 
 type UseTitleProps = {
   title?: ShareWishlist.Title
+  isEditable?: boolean
 }
 
-export function useTitle({ title = 'My wishlist' }: UseTitleProps) {
-  const [titleValue, setTitleValue] = useState(title)
+export function useTitle({ title = 'My wishlist', isEditable = false }: UseTitleProps) {
+  const [titleValue, setTitleValue] = useOptionalLocalStorage('title', title, isEditable)
   const onTitleChange = useCallback((nextTitle: string) => {
     setTitleValue(nextTitle)
   }, [setTitleValue])
@@ -63,8 +63,8 @@ type UseWishlistProps = {
 
 export function useWishlist({ wishlist, isEditable = false }: UseWishlistProps = {}): WishlistContextProps {
   const [items, setItems] = useItems({ items: wishlist?.items, isEditable })
-  const { updateWishlistId } = useWishlistId()
-  const { title, onTitleChange } = useTitle({ title: wishlist?.title })
+  const { updateWishlistId } = useWishlistId({ id: wishlist?.id, isEditable })
+  const { title, onTitleChange } = useTitle({ title: wishlist?.title, isEditable })
 
   return { wishlist, isEditable, items, setItems, updateWishlistId, title, onTitleChange }
 }

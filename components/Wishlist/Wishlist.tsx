@@ -1,7 +1,7 @@
 import { Box, Flex, Spacer, VStack } from '@chakra-ui/react'
 import { FC, useMemo } from 'react'
 import { ShareWishlist } from '../../types'
-import { useItems, useWishlist } from './use-wishlist'
+import { useWishlist } from './use-wishlist'
 import { WishlistContextProps, WishlistProvider } from './WishlistContext'
 import WishlistControlPanel from './WishlistControlPanel'
 import WishlistItems from './WishlistItems'
