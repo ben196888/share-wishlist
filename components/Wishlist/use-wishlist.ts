@@ -101,9 +101,9 @@ const buildShareLink = (shortPath: ShareWishlist.ShortPath) => {
 }
 
 export function useWishlistControlPanel() {
-  const { isEditable, items, updateWishlistId } = useWishlistContext()
+  const { isEditable, items, updateWishlistId, title } = useWishlistContext()
 
-  const saveWishlist = useCallback(async (items: ShareWishlist.Item[]) => {
+  const saveWishlist = useCallback(async (title: ShareWishlist.Title, items: ShareWishlist.Item[]) => {
     if (!isEditable) {
       throw Error('You cannot save this wishlist')
     }
@@ -113,6 +113,7 @@ export function useWishlistControlPanel() {
     const result = await runTransaction(ref(db, wishlistPath), (wishlist: ShareWishlist.Wishlist | null) => {
       const nextWishlist: ShareWishlist.Wishlist = {
         ...wishlist,
+        title,
         items,
         id: wishlistId,
         roles: {},
@@ -125,8 +126,8 @@ export function useWishlistControlPanel() {
   }, [isEditable, updateWishlistId])
 
   const saveFlow = useCallback(async () => {
-    await saveWishlist(items)
-  }, [saveWishlist, items])
+    await saveWishlist(title, items)
+  }, [saveWishlist, title, items])
 
   const onSave = useFlowWithToast(
     { title: 'Wishlist saved.' },
@@ -139,13 +140,13 @@ export function useWishlistControlPanel() {
   const createWishlistShortPath = useFunction<ReqData, ResData>('createWishlistShortPath')
 
   const getShortPath = useCallback(async () => {
-    const wishlist = await saveWishlist(items)
+    const wishlist = await saveWishlist(title, items)
     if (wishlist.shortPath) {
       return wishlist.shortPath
     }
     const result = await createWishlistShortPath({ wishlistId: wishlist.id })
     return result.data.shortPath
-  }, [saveWishlist, items, createWishlistShortPath])
+  }, [saveWishlist, title, items, createWishlistShortPath])
 
   const copyOrShare = useCopyOrShare()
 
