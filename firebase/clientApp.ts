@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app'
 import { connectDatabaseEmulator, getDatabase } from 'firebase/database'
 import { connectFunctionsEmulator, getFunctions } from 'firebase/functions'
+import { connectAuthEmulator, getAuth } from 'firebase/auth'
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -15,8 +16,10 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig)
 export const database = getDatabase(app)
 export const functions = getFunctions(app)
+export const auth = getAuth(app)
 
 if (process.env.NODE_ENV === 'development') {
+  connectAuthEmulator(auth, 'http://localhost:9099')
   connectDatabaseEmulator(database, 'localhost', 9000)
   connectFunctionsEmulator(functions, 'localhost', 5001)
 }

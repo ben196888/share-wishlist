@@ -5,6 +5,7 @@ import useCopyOrShare from '../../hooks/useCopyOrShare';
 import useFlowWithToast from '../../hooks/useFlowWithToast'
 import useFunction from '../../hooks/useFunction';
 import useOptionalLocalStorage from '../../hooks/useOptionalLocalStorage';
+import useUid from '../../hooks/useUid';
 import type { ShareWishlist } from '../../types';
 import { useWishlistContext, WishlistContextProps } from './WishlistContext';
 
@@ -102,6 +103,7 @@ const buildShareLink = (shortPath: ShareWishlist.ShortPath) => {
 
 export function useWishlistControlPanel() {
   const { isEditable, items, updateWishlistId, title } = useWishlistContext()
+  const uid = useUid()
 
   const saveWishlist = useCallback(async (title: ShareWishlist.Title, items: ShareWishlist.Item[]) => {
     if (!isEditable) {
@@ -111,19 +113,25 @@ export function useWishlistControlPanel() {
     const wishlistPath = `/wishlists/${wishlistId}`
 
     const result = await runTransaction(ref(db, wishlistPath), (wishlist: ShareWishlist.Wishlist | null) => {
+      if (wishlist?.roles && wishlist.roles[uid] !== 'owner') {
+        return
+      }
+      const roles: ShareWishlist.Wishlist['roles'] = {
+        [uid]: 'owner',
+      }
       const nextWishlist: ShareWishlist.Wishlist = {
         ...wishlist,
         title,
         items,
+        roles,
         id: wishlistId,
-        roles: null,
       }
 
       return nextWishlist
     })
 
     return result.snapshot.val() as ShareWishlist.Wishlist
-  }, [isEditable, updateWishlistId])
+  }, [isEditable, updateWishlistId, uid])
 
   const saveFlow = useCallback(async () => {
     await saveWishlist(title, items)

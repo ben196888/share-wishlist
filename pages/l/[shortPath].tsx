@@ -1,10 +1,10 @@
 import { useRouter } from 'next/router';
 import { ReactElement, useEffect } from 'react';
-import { useReadLocalStorage } from 'usehooks-ts';
 import AlertMessage from '../../components/AlertMessage';
 import Layout from '../../components/Layout';
 import Wishlist from '../../components/Wishlist';
 import useLoadingFunction from '../../hooks/useLoadingFunction';
+import useUid from '../../hooks/useUid';
 import type { ShareWishlist } from '../../types';
 
 type RequestData = ShareWishlist.Functions.GetWishlistByShortPath.RequestData
@@ -14,8 +14,8 @@ export default function ShortPath() {
   const router = useRouter()
   const { shortPath } = router.query
   const { func, data, loading, error } = useLoadingFunction<RequestData, ResponseData>('getWishlistByShortPath')
-  const wishlistIdLocal = useReadLocalStorage<ShareWishlist.WishlistId>('wishlistId')
-  const isEditable = wishlistIdLocal === data?.wishlist?.id
+  const uid = useUid()
+  const isEditable = data?.wishlist?.roles[uid] === 'owner'
 
   useEffect(() => {
     if (shortPath) {
