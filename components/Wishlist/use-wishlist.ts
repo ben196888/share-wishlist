@@ -7,7 +7,7 @@ import useFunction from '../../hooks/useFunction';
 import useOptionalLocalStorage from '../../hooks/useOptionalLocalStorage';
 import useUid from '../../hooks/useUid';
 import type { ShareWishlist } from '../../types';
-import { useWishlistContext, WishlistContextProps } from './WishlistContext';
+import { useWishlistContext } from './WishlistContext';
 
 // context provider value factorys
 type UseItemsProps = {
@@ -62,7 +62,7 @@ type UseWishlistProps = {
   isEditable?: boolean
 }
 
-export function useWishlist({ wishlist, isEditable = false }: UseWishlistProps = {}): WishlistContextProps {
+export function useWishlist({ wishlist, isEditable = false }: UseWishlistProps = {}) {
   const [items, setItems] = useItems({ items: wishlist?.items, isEditable })
   const { updateWishlistId } = useWishlistId({ id: wishlist?.id, isEditable })
   const { title, onTitleChange } = useTitle({ title: wishlist?.title, isEditable })

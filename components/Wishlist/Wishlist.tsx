@@ -23,9 +23,7 @@ interface WishlistComponent extends FC<WishlistProps> {
 const Wishlist: WishlistComponent = ({ isEditable, wishlist }) => {
   const ctx = useWishlist({ isEditable, wishlist })
 
-  const context: WishlistContextProps = useMemo(() => {
-    return { ...ctx }
-  }, [ctx])
+  const context: WishlistContextProps = useMemo(() => ctx, [ctx])
 
   return (
     <WishlistProvider value={context}>
