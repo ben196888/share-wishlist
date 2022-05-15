@@ -116,7 +116,7 @@ export function useWishlistControlPanel() {
         title,
         items,
         id: wishlistId,
-        roles: {},
+        roles: null,
       }
 
       return nextWishlist
